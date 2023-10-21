@@ -79,8 +79,7 @@ scale, remove_type, remove_num_cells, seed = (
 
 num_cells_xdir = 6
 num_cells_ydir = 12
-
-mesh_file = f"meshes/demo_2D_{num_cells_xdir}_{num_cells_ydir}_cells_newmesh.h5"
+mesh_file = f"meshes/mesh_6x12_cells.h5"
 mesh, volumes = load_mesh(mesh_file)
 
 if remove_type == "longitudinally":
