@@ -81,12 +81,11 @@ def find_middle_cells_longitudinally(mesh, volumes, num_cells_longitudinal, num_
     return remove_ids
 
 
-def find_random_cells(mesh, volumes, num_cells, seed=None):
+def find_random_cells(mesh, volumes, num_cells, seed, min_cell_id, max_cell_id):
     if seed is not None:
         random.seed(seed)
 
-    cells = list(set(volumes.array()[:]))
-    cells.remove(0)
+    cells = [x for x in range(min_cell_id, max_cell_id+1)] # list(set(volumes.array()[:]))
 
     ids = random.sample(cells, k=num_cells)
     print(ids)
@@ -94,13 +93,13 @@ def find_random_cells(mesh, volumes, num_cells, seed=None):
     return ids
 
 
-def replace_cells_with_matrix(mesh, volumes, cell_idts):
+def replace_cells_with_matrix(mesh, volumes, cell_idts, replacement_id):
     N = volumes.size()
     
     for i in range(N):
         n = volumes.array()[i]
         if n in cell_idts:
-            volumes.array()[i] = 0
+            volumes.array()[i] = replacement_id
 
 
 def generate_fibrotic_tissue(mesh, volumes, cell_idts):

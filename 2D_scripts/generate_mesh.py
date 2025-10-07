@@ -14,7 +14,7 @@ from gmshnics.interopt import msh_gmsh_model, mesh_from_gmsh
 import dolfin as df
 import json
 
-clmax = '10'
+clmax = '1'
 
 # With specific parameters for cardiomyocyte geometries
 make_cell = partial(make_plus2d, dx0=(2.0, 12.0), dx1=(100.0, 4.0))
@@ -27,13 +27,15 @@ gmsh.option.setNumber("Mesh.AnisoMax", 1)
 gmsh.option.setNumber("Mesh.Algorithm", 7)
 
 # In our geoemtry we want to create sheet with m x n cells ...
-m = n = 2
+m = 8
+n = 16
 ncells = (m, n)
 # ... that will have the following padding
-pads = (5.0, 5.0)
+pads = (10.0, 5.0)
 
+pad = 3
 # gaps between cells in the sheet
-shifts = (104.0, 23)
+shifts = (104.0, 23 + pad)
 
 model, connectivity = sheet_geometry(model, make_cell=make_cell, ncells=ncells, pads=pads,
                                      shifts=shifts)
@@ -77,7 +79,7 @@ print(f'Number of membrane facet {membrane_cells} / Total number of facets {mesh
 simple_interface, etag, itag = mark_interfaces(entity_fs[facet_dim], connectivity)
 
 # Just show of dumping to HDF5 ...
-with df.HDF5File(mesh.mpi_comm(), f'meshes/2d_mesh_{m}_{n}_{clmax}.h5', 'w') as out:
+with df.HDF5File(mesh.mpi_comm(), f'meshes_refinement_pad_10/2d_mesh_{m}_{n}_{clmax}.h5', 'w') as out:
     out.write(mesh, 'mesh/')
     out.write(entity_fs[2], 'subdomains/')
     out.write(entity_fs[1], 'interfaces/')        
@@ -88,4 +90,4 @@ with df.HDF5File(mesh.mpi_comm(), f'meshes/2d_mesh_{m}_{n}_{clmax}.h5', 'w') as 
 # And Paraview for visual inspection
 df.File(f'meshes/2d_mesh_{m}_{n}_{clmax}_subdomains.pvd') << entity_fs[2]
 df.File(f'meshes/2d_mesh_{m}_{n}_{clmax}_interfaces.pvd') << entity_fs[1]
-df.File(f'meshes/2d_mesh_{m}_{n}_{clmax}_interfaces.pvd') << simple_interface
+#df.File(f'meshes/2d_mesh_{m}_{n}_{clmax}_interfaces.pvd') << simple_interface
